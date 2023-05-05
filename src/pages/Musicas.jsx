@@ -1,11 +1,28 @@
 import React, { useEffect } from "react";
 import api from "../api"; // importando a instância do Axios de "api.js"
 import { useState } from "react";
-import ItemMusica from "../components/itemMusica";
-import Menu from "../components/menu";
+import ItemMusica from "../components/ItemMusica";
+import { useNavigate } from "react-router-dom";
 
 function Musicas() {
+
+ 
+
+  const navigate = useNavigate();
+
   const [musicas, setMusicas] = useState([]); // criando estado de vetor para uma lista de músicas
+
+  function deletarMusica(id) {
+     
+
+    api.delete(`/${id}`)
+    .then(() => {
+      setMusicas(musicas.filter(musica => musica.id !== id));
+    })
+    .catch(() => {
+      alert("deu erro")
+    })
+  }
 
   useEffect(() => {
     api
@@ -22,35 +39,35 @@ function Musicas() {
   }, []);
 
   return (
-   <>
-  <Menu/>
+    <>
 
-   <div class="container">
-        <div class="filter">
-            <button class="btn">Adicionar</button>
+
+      <div className="container">
+        <div className="filter">
+          <button className="btn"
+          onClick={() => navigate("/adicionar")}
+          >Adicionar</button>
         </div>
-    </div>
+      </div>
 
-    <div class="container">
-        <div class="music-boxes">
-
-        {
-          musicas.map((musica) => (
+      <div className="container">
+        <div className="music-boxes">
+          {musicas.map((musica) => (
+            <React.Fragment key={musica.id}>
             <ItemMusica
-             nome={musica.nome}
-             artista={musica.artista}
-             genero={musica.genero}
-             ano={musica.ano}
-             capa={musica.imagem}
-             />     
-
-            
-          ))
-        }
-
+              id={musica.id}
+              nome={musica.nome}
+              artista={musica.artista}
+              genero={musica.genero}
+              ano={musica.ano}
+              capa={musica.imagem}
+              funcaoDeletar={deletarMusica}
+              />
+            </React.Fragment>
+          ))}
         </div>
-    </div>
-   </>
+      </div>
+    </>
   );
 }
 
